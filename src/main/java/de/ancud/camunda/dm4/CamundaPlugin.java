@@ -43,6 +43,9 @@ public class CamundaPlugin extends PluginActivator implements CamundaService, Po
     @Override
     public String hello() {
         try {
+            // Here use the DeepaMehta Core Service ("dm4" object) and/or the injected services as provided by the
+            // other modules. See /modules/dm4-core/src/main/java/de/deepamehta/core/service/CoreService.java
+            // or the ...Service.java interfaces of the other modules.
             wsService.sendMessage(getUri(), new JSONObject()
                 .put("action", "showTopic")
                 .put("topicId", 1234)
@@ -60,7 +63,7 @@ public class CamundaPlugin extends PluginActivator implements CamundaService, Po
     public void postLoginUser(String username) {
         String sessionId = request.getSession(false).getId();
         logger.info("### Session ID: " + sessionId);
-        // login to Camunda application and pass the DeepaMehta session ID.
+        // Here login to the external Camunda application and pass the DeepaMehta session ID.
         // Let the Camunda application pass back the session ID in every request (in the JESSIONID cookie).
     }
 }
