@@ -13,14 +13,19 @@
     <parent>
         <groupId>de.deepamehta</groupId>
         <artifactId>deepamehta-plugin</artifactId>
-        <version>4.8.3</version>
+        <version>4.8.4-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>de.deepamehta</groupId>
             <artifactId>deepamehta-accesscontrol</artifactId>
-            <version>4.8.3</version>
+            <version>4.8.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>de.deepamehta</groupId>
+            <artifactId>dm48-websockets</artifactId>
+            <version>0.4-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

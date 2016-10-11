@@ -2,6 +2,10 @@ package de.ancud.camunda.dm4;
 
 import de.deepamehta.accesscontrol.event.PostLoginUserListener;
 import de.deepamehta.core.osgi.PluginActivator;
+import de.deepamehta.core.service.Inject;
+import de.deepamehta.websockets.WebSocketsService;
+
+import org.codehaus.jettison.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,6 +26,9 @@ public class CamundaPlugin extends PluginActivator implements CamundaService, Po
 
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
+    @Inject
+    private WebSocketsService wsService;
+
     @Context
     private HttpServletRequest request;
 
@@ -35,7 +42,16 @@ public class CamundaPlugin extends PluginActivator implements CamundaService, Po
     @Path("/hello")
     @Override
     public String hello() {
-        return "*** DeepaMehta 4 Camunda ***\n";
+        try {
+            wsService.sendMessage(getUri(), new JSONObject()
+                .put("action", "showTopic")
+                .put("topicId", 1234)
+                .toString()
+            );
+            return "*** DeepaMehta 4 Camunda ***\n";
+        } catch (Exception e) {
+            throw new RuntimeException("Sending a WebSocket message failed", e);
+        }
     }
 
     // *** Listeners ***
