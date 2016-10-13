@@ -1,8 +1,12 @@
 package de.ancud.camunda.dm4;
 
 import de.deepamehta.accesscontrol.event.PostLoginUserListener;
+import de.deepamehta.core.ChildTopics;
+import de.deepamehta.core.Topic;
+import de.deepamehta.core.model.TopicModel;
 import de.deepamehta.core.osgi.PluginActivator;
 import de.deepamehta.core.service.Inject;
+import de.deepamehta.core.service.event.PostUpdateTopicListener;
 import de.deepamehta.websockets.WebSocketsService;
 
 import org.codehaus.jettison.json.JSONObject;
@@ -22,7 +26,8 @@ import java.util.logging.Logger;
 @Path("/camunda")
 @Consumes("application/json")
 @Produces("application/json")
-public class CamundaPlugin extends PluginActivator implements CamundaService, PostLoginUserListener {
+public class CamundaPlugin extends PluginActivator implements CamundaService, PostUpdateTopicListener,
+                                                                              PostLoginUserListener {
 
     // ---------------------------------------------------------------------------------------------- Instance Variables
 
@@ -58,6 +63,22 @@ public class CamundaPlugin extends PluginActivator implements CamundaService, Po
     }
 
     // *** Listeners ***
+
+    @Override
+    public void postUpdateTopic(Topic topic, TopicModel newModel, TopicModel oldModel) {
+        try {
+            if (topic.getTypeUri().equals("dm4.contacts.person")) {
+                ChildTopics childs = topic.getChildTopics().getTopic("dm4.contacts.person_name").getChildTopics();
+                String firstName = childs.getTopic("dm4.contacts.first_name").getSimpleValue().toString();
+                String lastName  = childs.getString("dm4.contacts.last_name");
+                logger.info("### Person: \"" + firstName + "\" \"" + lastName + "\"");
+                JSONObject json = topic.toJSON()
+                    .put("process", 1234);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Creating JSON failed", e);
+        }
+    }
 
     @Override
     public void postLoginUser(String username) {
